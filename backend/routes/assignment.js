@@ -42,6 +42,36 @@ router.post('/', async (req, res) => {
   })
 })
 
+//PUT : /assignment/:assignmentID/desc
+router.put('/:assignmentID/desc', async (req, res) => {
+  var assignmentID = req.params.assignmentID;
+  var description = req.body.description
+  connection.query('UPDATE assignment SET description = ? WHERE assignmentID = ?', [description, assignmentID], function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result));      // Result in JSON format
+    });
+});
+
+//PUT : /assignment/:assignmentID/:dueDate
+router.put('/:assignmentID/:dueDate', async (req, res) => {
+  var assignmentID = req.params.assignmentID;
+  var dueDate = req.params.dueDate;
+  connection.query('UPDATE assignment SET dueDate = ? WHERE assignmentID = ?', [dueDate, assignmentID], function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result));      // Result in JSON format
+    });
+});
+
+//PUT : /assignment/:assignmentID/:assignmentType
+router.put('/:assignmentID/:assignmentType', async (req, res) => {
+  var assignmentID = req.params.assignmentID;
+  var assignmentType = req.params.assignmentType;
+  connection.query('UPDATE assignment SET assignmentType = ? WHERE assignmentID = ?', [assignmentType, assignmentID], function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result));      // Result in JSON format
+    });
+});
+
 router.delete('/:assignmentID', async (req, res) => {
   var assignmentID = req.params.assignmentID;
   connection.query('DELETE FROM assignment WHERE assignmentID = ?', [assignmentID], function (err, result, fields) {
