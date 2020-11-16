@@ -32,6 +32,7 @@ const assignment = require('./routes/assignment')
 
 app.use('/user', user)
 app.use('/assignment', assignment)
+app.use('/user-assignment', userassignment)
 
 app.get('/', (req, res) => {
   res.status(200).send('Go to 0.0.0.0:3000.');
