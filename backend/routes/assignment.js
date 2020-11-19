@@ -19,6 +19,7 @@ router.get('/:assignmentID', function (req, res) {
   })
 })
 
+
 router.post('/', async (req, res) => {
   var classID = req.param('classID')
   var description = req.param('description')
@@ -72,6 +73,7 @@ router.put('/:assignmentID/:assignmentType', async (req, res) => {
     });
 });
 
+//DELETE
 router.delete('/:assignmentID', async (req, res) => {
   var assignmentID = req.params.assignmentID;
   connection.query('DELETE FROM assignment WHERE assignmentID = ?', [assignmentID], function (err, result, fields) {
