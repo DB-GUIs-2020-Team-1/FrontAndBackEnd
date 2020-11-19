@@ -4,7 +4,7 @@ const connection = require('../connection')
 //GET: /user-assignment/:userID
 router.get('/:userID', async (req, res) => {
   var userID = req.params.userID;
-  connection.query('SELECT * from `user-assignment` JOIN assignment ON `user-assignment`.assignmentID = assignment.assignmentID where userID = ? order by dueDate', [userID], function (err, result, fields) {
+  connection.query('SELECT * from assignment JOIN `user-assignment` ON `user-assignment`.assignmentID = assignment.assignmentID where userID = ? order by dueDate', [userID], function (err, result, fields) {
     if (err) throw err;
     res.end(JSON.stringify(result));      // Result in JSON format
     });
@@ -13,7 +13,16 @@ router.get('/:userID', async (req, res) => {
 //GET: /user-assignment/:userID/incomplete
 router.get('/:userID/incomplete', async (req, res) => {
   var userID = req.params.userID;
-  connection.query('SELECT * from `user-assignment` JOIN assignment ON `user-assignment`.assignmentID = assignment.assignmentID where userID = ? AND completionStatus = 0 order by dueDate', [userID], function (err, result, fields) {
+  connection.query('SELECT * from assignment JOIN `user-assignment` ON `user-assignment`.assignmentID = assignment.assignmentID where userID = ? AND completionStatus = 0 order by dueDate', [userID], function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result));      // Result in JSON format
+    });
+});
+
+//GET: /user-assignment/:userID/complete
+router.get('/:userID/complete', async (req, res) => {
+  var userID = req.params.userID;
+  connection.query('SELECT * from assignment JOIN `user-assignment` ON `user-assignment`.assignmentID = assignment.assignmentID where userID = ? AND completionStatus = 1 order by dueDate', [userID], function (err, result, fields) {
     if (err) throw err;
     res.end(JSON.stringify(result));      // Result in JSON format
     });
@@ -54,6 +63,16 @@ router.get('/:userID/homework', async (req, res) => {
   var userID = req.params.userID;
   //Store assignment type "Homework" in database as 4
   connection.query('SELECT * from `user-assignment` JOIN assignment ON `user-assignment`.assignmentID = assignment.assignmentID where userID = ? and assignmentType = 4', [userID], function (err, result, fields) {
+    if (err) throw err;
+    res.end(JSON.stringify(result));      // Result in JSON format
+    });
+});
+
+//POST: /user-assignment/:userID/:assignmentID
+router.post('/:userID/:assignmentID', async (req, res) => {
+  var userID = req.params.userID;
+  var assignmentID = req.params.assignmentID;
+  connection.query('INSERT INTO `user-assignment` (userID, assignmentID) VALUES (?, ?)', [userID, assignmentID], function (err, result, fields) {
     if (err) throw err;
     res.end(JSON.stringify(result));      // Result in JSON format
     });
