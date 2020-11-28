@@ -37,6 +37,23 @@ router.get('/:userID', (req, res) => {
     })
 })
 
+router.get('/login/:username', (req, res) => {
+    var username = req.params.username
+    var password = req.body.password
+
+    connection.query("SELECT userID FROM user WHERE username = ? AND password = ?", [username, password], (err, rows) => {
+        if (err) {
+            logger.error("Error while executing Query: \n", err);
+            res.status(400).json({
+                "data": [],
+                "error": "MySQL error"
+            })
+        } else {
+            res.status(200).json(rows)
+        }
+    })
+})
+
 // router.get('/recover', (req, res) => {
 //     var email = req.body.email
 
@@ -76,23 +93,7 @@ router.post('/create', async(req, res) => {
     })
 })
 
-router.post('/login', async(req, res) => {
-    const username = req.body.username
-    const password = req.body.password
 
-    connection.query("SELECT COUNT(*) AS users_count FROM `canvasplus`.`user` u WHERE u.username = ? AND u.password = ?", [username, password], (err, rows) => {
-        if (err) {
-            logger.error("Error while executing Query: \n", err)
-            res.status(400).json({
-                "data": [],
-                "error": "MySQL error"
-            })
-        } else {
-            const accountExists = rows[0]['users_count'] > 0
-            res.status(200).json(accountExists)
-        }
-    })
-})
 
 router.put('/', async(req, res) => {
     let password = req.body.password
