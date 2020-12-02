@@ -80,7 +80,7 @@ module.exports = function user(app, logger) {
                 // if there is no issue obtaining a connection, execute query and release connection
                 const username = req.body.username
                 const password = req.body.password
-                connection.query('SELECT IF(EXISTS(SELECT * FROM `canvasplus`.`user` u WHERE u.username = ? AND u.password = ?), (SELECT u.username AS result FROM `canvasplus`.`user` u WHERE u.password = ?), 0) AS result', [username, password, password], function (err, rows, fields) {
+                connection.query('SELECT IF(EXISTS(SELECT * FROM `canvasplus`.`user` u WHERE u.username = ? AND u.password = ?), (SELECT u.username, u.userID AS result FROM `canvasplus`.`user` u WHERE u.password = ?), 0) AS result', [username, password, password], function (err, rows, fields) {
                     // if there is an error with the query, release the connection instance and log the error
                     connection.release()
                     if (err) {

@@ -2,6 +2,31 @@ const pool = require('../connection')
 
 module.exports = function classes(app, logger) {
 
+  app.get('/classes/', (req, res) => {
+    // obtain a connection from our pool of connections
+    pool.getConnection(function (err, connection){
+      if(err){
+        // if there is an issue obtaining a connection, release the connection instance and log the error
+        logger.error('Problem obtaining MySQL connection',err)
+        res.status(400).send('Problem obtaining MySQL connection'); 
+      } else {
+
+          connection.query('SELECT * FROM class', (err, rows) => {
+            connection.release();
+            if (err) {
+              logger.error("Error while executing Query: \n", err);
+              res.status(400).json({
+                "data": [],
+                "error": "MySQL error"
+              })
+            } else {
+                res.status(200).json(rows)
+            }
+          });
+      }
+    });
+  });
+
   app.get('/classes/:classID', (req, res) => {
     console.log(req.params.commentID);
     // obtain a connection from our pool of connections
@@ -43,6 +68,35 @@ module.exports = function classes(app, logger) {
 
           connection.query('SELECT c.classID, c.classDaysID, c.description,c.yearOffered, c.seasonOffered, c.classTimeStart, c.classTimeEnd FROM `canvasplus`.`class` c JOIN `canvasplus`.`schedule` s ON c.classID = s.classID WHERE s.userID = ?;', [uID], (err, rows) => {
             // if there is an error with the query, release the connection instance and log the error
+            connection.release();
+            if (err) {
+              logger.error("Error while executing Query: \n", err);
+              res.status(400).json({
+                "data": [],
+                "error": "MySQL error"
+              })
+            } else {
+                res.status(200).json(rows)
+            }
+          });
+      }
+    });
+  });
+
+  app.get('/classes/search', (req, res) => {
+    // obtain a connection from our pool of connections
+    pool.getConnection(function (err, connection){
+      if(err){
+        // if there is an issue obtaining a connection, release the connection instance and log the error
+        logger.error('Problem obtaining MySQL connection',err)
+        res.status(400).send('Problem obtaining MySQL connection'); 
+      } else {
+          var classID = req.body.classID
+          var name = req.body.name
+          var startTime = req.body.startTime
+          var season = req.body.season
+          var year = req.body.year
+          connection.query('SELECT * FROM class where classID = ? AND description = ? AND startTime = ? AND seasonOffered = ? AND yearOffered = ?', [classID, name, startTime, season, year], (err, rows) => {
             connection.release();
             if (err) {
               logger.error("Error while executing Query: \n", err);
